@@ -38,7 +38,7 @@ public class DBDao {
         }
 
         if(schema.isEmpty()) {
-            throw new Exception("TABLE NOT FOUND!");
+            throw new Exception(tableName + " TABLE NOT FOUND!");
         }
 
         return schema;

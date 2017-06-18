@@ -1,6 +1,8 @@
 package com.Pokke;
 
 import java.sql.SQLException;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.List;
 
@@ -38,6 +40,23 @@ public class IngestData {
         String colValues = Utility.getValues(excelData, tableSchema, cellSplitor);
 
         return dao.insertOperation(tableName, colNames, colValues);
+    }
+
+    public static void main(String[] args) throws Exception {
+        String[] tables = new String[] {"category", "address", "diploma", "img", "institute", "contact_info", "post_type", "social_meta", "role", "title", "status", "post", "user", "loc_post", "like_reply", "loc_post_key_word", "location", "user_academic", "user_contact_info", "user_ref", "user_social_meta", "coordinate", "like_post", "key_word"};
+        new IngestData();
+        Set<String> types = new HashSet<String>();
+
+        for(String table : tables) {
+            Map<String, String> schema = dao.getTableSchema(table);
+            for(String key : schema.keySet()) {
+                types.add(schema.get(key));
+            }
+        }
+
+        for(String temp : types) {
+            System.out.println(temp);
+        }
     }
 
 }

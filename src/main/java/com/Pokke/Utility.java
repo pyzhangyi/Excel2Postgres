@@ -1,10 +1,14 @@
 package com.Pokke;
 
 import java.io.IOException;
-import java.util.*;
+import java.sql.Timestamp;
 import java.io.InputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.List;
 
 /**
  * Created by EZ193M on 6/16/17.
@@ -72,15 +76,44 @@ public class Utility {
                 String cellType = schema.get(header[j]).toLowerCase();
                 String cellValue = cells[j];
 
-                if(cellType.equals("varchar")) {
+                if ("null".equals(cellValue.toLowerCase())) {
+                    currentRow += "NULL,";
+                    continue;
+                }
+
+                if (cellType.equals("varchar") || cellType.equals("bool")) {
                     currentRow += "'" + cellValue + "',";
                 }
-                else if(cellType.contains("int")) {
+                else if (cellType.contains("int")) {
                     try {
                         currentRow += Integer.parseInt(cellValue) + ",";
                     }
                     catch (Exception e) {
-                        throw new Exception("Can't parse to int");
+                        throw new Exception("Can't parse " + cellValue + " to int");
+                    }
+                }
+                else if (cellType.contains("float")) {
+                    try {
+                        currentRow += Float.parseFloat(cellValue) + ",";
+                    }
+                    catch (Exception e) {
+                        throw new Exception("Can't parse " + cellValue + " to float");
+                    }
+                }
+                else if (cellType.equals("bool")) {
+                    try {
+                        currentRow += Boolean.parseBoolean(cellValue) + ",";
+                    }
+                    catch (Exception e) {
+                        throw new Exception("Only value 'true' or 'false', but value is " + cellValue);
+                    }
+                }
+                else if (cellType.equals("timestamp")) {
+                    try {
+                        currentRow += Timestamp.valueOf(cellValue);
+                    }
+                    catch (Exception e) {
+                        throw new Exception("Can't parse " + cellValue + " to timestamp");
                     }
                 }
             }
