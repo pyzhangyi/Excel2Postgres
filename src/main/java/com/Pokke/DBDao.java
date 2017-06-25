@@ -44,13 +44,34 @@ public class DBDao {
         return schema;
     }
 
+    public Map<String, Integer> getTableColLength(String tableName) throws Exception {
+        Map<String, Integer> colInfo = new HashMap<String, Integer>();
+        try {
+            DatabaseMetaData metaData = conn.getMetaData();
+            ResultSet rs = metaData.getColumns(null, null, tableName, null);
+            while (rs.next()) {
+                colInfo.put(rs.getString("COLUMN_NAME"), rs.getInt("COLUMN_SIZE"));
+            }
+        }
+        catch (SQLException e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        if (colInfo.size() == 0) {
+            throw new Exception(tableName + "TABLE NOT FOUND");
+        }
+
+        return colInfo;
+    }
+
     // Insert Operation
     public Boolean insertOperation(String tableName, String colNames, String values) {
         int result = 0;
         String query = "INSERT INTO " + tableName + " (" + colNames + ") VALUES " + values + ";";
+        System.out.println(query);
         try {
             result = stmt.executeUpdate(query);
-            conn.commit();
+            //conn.commit();
         }
         catch (SQLException e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());

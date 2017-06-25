@@ -18,8 +18,9 @@ public class Utility {
     public static String getTableNameFromFileName(String fileLocation) {
         String[] temp = fileLocation.split("/");
         String file = temp[temp.length - 1];
+        int pos = file.indexOf('.');
 
-        return file.split(".")[0];
+        return file.substring(0, pos);
     }
 
     // Read the properties from the properties file
@@ -46,12 +47,8 @@ public class Utility {
 
     public static Boolean schemaMatch(Set<String> tableCols, String sheetHeader, String cellSplitor) {
         String[] fields = sheetHeader.split(cellSplitor);
-        if(fields.length != tableCols.size()) {
-            return false;
-        }
-
-        for (String current : fields) {
-            if (!tableCols.contains(current)) {
+        for (String field : fields) {
+            if (!tableCols.contains(field)) {
                 return false;
             }
         }
@@ -72,7 +69,7 @@ public class Utility {
             String[] cells = excelData.get(i).split(cellSplitor);
             String currentRow = "(";
 
-            for(int j = 0; j < cells.length; ++i) {
+            for(int j = 0; j < cells.length; ++j) {
                 String cellType = schema.get(header[j]).toLowerCase();
                 String cellValue = cells[j];
 
@@ -86,7 +83,7 @@ public class Utility {
                 }
                 else if (cellType.contains("int")) {
                     try {
-                        currentRow += Integer.parseInt(cellValue) + ",";
+                        currentRow += Math.round(Float.parseFloat(cellValue)) + ",";
                     }
                     catch (Exception e) {
                         throw new Exception("Can't parse " + cellValue + " to int");
@@ -120,9 +117,9 @@ public class Utility {
 
             currentRow = currentRow.substring(0, currentRow.length() - 1);
             currentRow += ")";
-            results += currentRow;
+            results += currentRow + ",";
         }
 
-        return results;
+        return results.substring(0, results.length() - 1);
     }
 }
